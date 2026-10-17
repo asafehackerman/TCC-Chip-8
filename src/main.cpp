@@ -10,19 +10,19 @@ int main(int argc, char** argv)
 	if (argc != 4)
 	{
 		std::cerr << "Uso: " << argv[0] << " <escala> <delay_ms> <ROM>\n";
-		std::cerr << "  escala   : fator de escala da janela (ex: 10 para 640x320)\n";
-		std::cerr << "  delay_ms : tempo em ms entre ciclos (ex: 1 para rapido, 3 para jogos)\n";
-		std::cerr << "  ROM      : caminho para o arquivo .ch8\n";
+		std::cerr << "escala: fator de escala da janela (ex: 10 para 640x320)\n";
+		std::cerr << "delay_ms: tempo em ms entre ciclos (ex: 1 para rapido, 3 para jogos)\n";
+		std::cerr << "ROM: caminho para o arquivo .ch8\n";
 		std::exit(EXIT_FAILURE);
 	}
 
-	int         videoScale  = std::stoi(argv[1]);
-	int         cycleDelay  = std::stoi(argv[2]);
+	int videoScale = std::stoi(argv[1]);
+	int cycleDelay = std::stoi(argv[2]);
 	char const* romFilename = argv[3];
 
 	// Cria a janela SDL2 (64*escala x 32*escala pixels)
 	Platform platform(
-		"CHIP-8 Emulator",
+		"Emulador Chip-8",
 		VIDEO_WIDTH  * videoScale,
 		VIDEO_HEIGHT * videoScale,
 		VIDEO_WIDTH,
@@ -45,9 +45,7 @@ int main(int argc, char** argv)
 		quit = platform.ProcessInput(chip8.keypad);
 
 		auto  currentTime = std::chrono::high_resolution_clock::now();
-		float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(
-			currentTime - lastCycleTime
-		).count();
+		float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
 
 		// Executa um ciclo apenas quando o delay passou
 		if (dt > cycleDelay)
@@ -56,7 +54,7 @@ int main(int argc, char** argv)
 
 			chip8.Cycle();
 
-			// Atualiza a tela com o buffer de vídeo atual
+			// Atualiza a tela
 			platform.Update(chip8.video, videoPitch);
 		}
 	}
