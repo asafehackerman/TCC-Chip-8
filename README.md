@@ -1,6 +1,6 @@
 # Emulador CHIP-8
 
-## Como executar
+## Como executar (comandos do bash)
 
 O emulador já está compilado e pronto para uso. Para executá-lo, basta utilizar um dos comandos abaixo para rodar os jogos disponíveis no projeto, este emulador implementa o CHIP-8 original e não possui suporte a extensões como Super-CHIP.
 
