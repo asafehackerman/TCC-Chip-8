@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <cstdint>
+#include <string>
 
 class Platform {
 public:
@@ -35,14 +36,14 @@ public:
         textEmulacao = TTF_CreateText(textEngine, font, "Emulação", 0);
         textControles = TTF_CreateText(textEngine, font, "Controles", 0);
         textInfo = TTF_CreateText(textEngine, font, "Info", 0);
-        text1 = TTF_CreateText(textEngine, font, texto1, 0);
-        text2 = TTF_CreateText(textEngine, font, texto2, 0);
-        text3 = TTF_CreateText(textEngine, font, texto3, 0);
-        text4 = TTF_CreateText(textEngine, font, texto4, 0);
-        text5 = TTF_CreateText(textEngine, font, texto5, 0);
-        text6 = TTF_CreateText(textEngine, font, texto6, 0);
-        text7 = TTF_CreateText(textEngine, font, texto7, 0);
-        text8 = TTF_CreateText(textEngine, font, texto8, 0);
+        text1 = TTF_CreateText(textEngine, font, texto1.c_str(), 0);
+        text2 = TTF_CreateText(textEngine, font, texto2.c_str(), 0);
+        text3 = TTF_CreateText(textEngine, font, texto3.c_str(), 0);
+        text4 = TTF_CreateText(textEngine, font, texto4.c_str(), 0);
+        text5 = TTF_CreateText(textEngine, font, texto5.c_str(), 0);
+        text6 = TTF_CreateText(textEngine, font, texto6.c_str(), 0);
+        text7 = TTF_CreateText(textEngine, font, texto7.c_str(), 0);
+        text8 = TTF_CreateText(textEngine, font, texto8.c_str(), 0);
 
         // Define a cor dos textos
         if (textArquivo) TTF_SetTextColor(textArquivo, 0, 0, 0, 255);
@@ -195,7 +196,6 @@ public:
 
                 case SDL_EVENT_MOUSE_BUTTON_DOWN: {
                     float mouseX, mouseY;
-                    bool optionSelected = false;
 
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         mouseX = event.button.x;
@@ -206,7 +206,15 @@ public:
 
                         if (insideMenuBar) { // se o clique for na barra de menu, faz uma ação
                             if (mouseX >= 12 && mouseX < 90) { // Seleciona arquivo
-                                optionSelected = true;
+                                optionSelected = 1;
+                                cleanTexts();
+                                texto1 = "Carregar Arquivo";
+                                texto2 = "Fechar Arquivo";
+                                texto3 = "Tela cheia";
+                                texto4 = "Jogos Recentes";
+                                texto5 = "Sair";
+
+                                updateTexts();
                                 
                                 rectSelected = SDL_FRect{
                                     10.0f,
@@ -220,10 +228,21 @@ public:
                                     250.0f,
                                     250.0f
                                 };
+
+                                
                             }
                             else if (mouseX >= 100 && mouseX < 200) { // Seleciona emulação
-                                optionSelected = true;
-                                
+                                optionSelected = 2;
+                                cleanTexts();
+                                texto1 = "Pausar/Retomar";
+                                texto2 = "Reiniciar";
+                                texto3 = "Alterar Velocidade";
+                                texto4 = "Salvar estado";
+                                texto5 = "Carregar estado";
+                                texto6 = "Apagar estado";
+
+                                updateTexts();
+
                                 rectSelected = SDL_FRect{
                                     108.0f,
                                     45.0f,
@@ -238,7 +257,8 @@ public:
                                 };
                             }
                             else if (mouseX >= 220 && mouseX < 330) { // Seleciona controles
-                                optionSelected = true;
+                                optionSelected = 3;
+                                cleanTexts();
                                 
                                 rectSelected = SDL_FRect{
                                     228.0f,
@@ -254,7 +274,8 @@ public:
                                 };
                             }
                             else if (mouseX >= 350 && mouseX < 410) { // Seleciona info
-                                optionSelected = true;
+                                optionSelected = 4;
+                                cleanTexts();
 
                                 rectSelected = SDL_FRect{
                                     348.0f,
@@ -316,19 +337,44 @@ private:
     int windowWidth{};
     int windowHeight{};
     int menuBarHeight{};
+    int optionSelected = 0;
 
-    string texto1;
-    string texto2;
-    string texto3;
-    string texto4;
-    string texto5;
-    string texto6;
-    string texto7;
-    string texto8;
+    std::string texto1;
+    std::string texto2;
+    std::string texto3;
+    std::string texto4;
+    std::string texto5;
+    std::string texto6;
+    std::string texto7;
+    std::string texto8;
 
     // Verifica se tá em tela cheia
     bool isFullscreen() {
         return (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) != 0;
+    }
+
+    void updateTexts() {
+        if (text1) TTF_SetTextString(text1, texto1.c_str(), texto1.length());
+        if (text2) TTF_SetTextString(text2, texto2.c_str(), texto2.length());
+        if (text3) TTF_SetTextString(text3, texto3.c_str(), texto3.length());
+        if (text4) TTF_SetTextString(text4, texto4.c_str(), texto4.length());
+        if (text5) TTF_SetTextString(text5, texto5.c_str(), texto5.length());
+        if (text6) TTF_SetTextString(text6, texto6.c_str(), texto6.length());
+        if (text7) TTF_SetTextString(text7, texto7.c_str(), texto7.length());
+        if (text8) TTF_SetTextString(text8, texto8.c_str(), texto8.length());
+    }
+
+    void cleanTexts() {
+        texto1.clear();
+        texto2.clear();
+        texto3.clear();
+        texto4.clear();
+        texto5.clear();
+        texto6.clear();
+        texto7.clear();
+        texto8.clear();
+
+        updateTexts();
     }
 
     // Desenha a barra de menu
@@ -353,7 +399,33 @@ private:
         if (textControles) TTF_DrawRendererText(textControles, 230.0f, 10.0f);
         if (textInfo) TTF_DrawRendererText(textInfo, 350.0f, 10.0f);
         if (optionSelected) {
-            
+            switch (optionSelected) {
+                case 1:
+                    TTF_DrawRendererText(text1, 12.0f, static_cast<float>(menuBarHeight) + 10.0f);
+                    TTF_DrawRendererText(text2, 12.0f, static_cast<float>(menuBarHeight) + 40.0f);
+                    TTF_DrawRendererText(text3, 12.0f, static_cast<float>(menuBarHeight) + 70.0f);
+                    TTF_DrawRendererText(text4, 12.0f, static_cast<float>(menuBarHeight) + 100.0f);
+                    TTF_DrawRendererText(text5, 12.0f, static_cast<float>(menuBarHeight) + 130.0f);
+                break;
+
+                case 2:
+                    TTF_DrawRendererText(text1, 108.0f, static_cast<float>(menuBarHeight) + 10.0f);
+                    TTF_DrawRendererText(text2, 108.0f, static_cast<float>(menuBarHeight) + 40.0f);
+                    TTF_DrawRendererText(text3, 108.0f, static_cast<float>(menuBarHeight) + 70.0f);
+                    TTF_DrawRendererText(text4, 108.0f, static_cast<float>(menuBarHeight) + 100.0f);
+                    TTF_DrawRendererText(text5, 108.0f, static_cast<float>(menuBarHeight) + 130.0f);
+                    TTF_DrawRendererText(text6, 108.0f, static_cast<float>(menuBarHeight) + 160.0f);
+                break;
+
+                case 3:
+
+                break;
+
+                case 4:
+
+                break;
+            }
+
         }
     }
 };
