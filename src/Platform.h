@@ -117,18 +117,19 @@ public:
                 static_cast<float>(windowWidth),
                 static_cast<float>(windowHeight)
             };
-        } else {
+        } 
+        
+        else {
             gameArea = SDL_FRect{
                 0.0f,
                 static_cast<float>(menuBarHeight),
                 static_cast<float>(windowWidth),
                 static_cast<float>(windowHeight - menuBarHeight)
             };
-
-            drawMenuBar();
         }
 
         SDL_RenderTexture(renderer, texture, nullptr, &gameArea);
+        drawMenuBar();
         SDL_RenderPresent(renderer);
     }
 
@@ -295,6 +296,7 @@ public:
                         else if (!insideSubMenu) { // se o clique não for no Menu nem no Submenu, limpa as seleções
                             rectSelected = SDL_FRect{};
                             rectSubMenu = SDL_FRect{};
+                            cleanTexts();
                         }
                     }
                 }
