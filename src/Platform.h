@@ -114,7 +114,7 @@ public:
                     static_cast<float>(windowWidth),
                     static_cast<float>(windowHeight)
                 };
-            } 
+            }
             
             else {
                 gameArea = SDL_FRect{
@@ -126,31 +126,32 @@ public:
             }
 
             SDL_RenderTexture(renderer, texture, nullptr, &gameArea);
-            drawMenuBar();
+            if (!isFullscreen()) {
+                drawMenuBar();
+            }
             SDL_RenderPresent(renderer);
         }
 
         // Recebe e processa comandos de teclado
         bool ProcessInput(uint8_t* keys) {
-            bool quit = false;
             SDL_Event event;
 
             while (SDL_PollEvent(&event)) {
                 switch (event.type) {
                     case SDL_EVENT_QUIT:
-                        quit = true;
+                        return true;
                         break;
 
                     case SDL_EVENT_KEY_DOWN:
                         switch (event.key.scancode) {
                             case SDL_SCANCODE_ESCAPE:
-                                quit = true;
-                                break;
+                                return true;
+                            break;
 
-                            case SDL_SCANCODE_F11: {
+                            case SDL_SCANCODE_F11:
                                 SDL_SetWindowFullscreen(window, !isFullscreen());
-                                break;
-                            }
+                            break;
+                            
 
                             case SDL_SCANCODE_X: keys[0] = 1; break;
                             case SDL_SCANCODE_1: keys[1] = 1; break;
@@ -225,7 +226,7 @@ public:
                                         0.0f,
                                         static_cast<float>(menuBarHeight),
                                         210.0f,
-                                        250.0f
+                                        165.0f
                                     };
 
                                     
@@ -255,7 +256,7 @@ public:
                                         108.0f,
                                         static_cast<float>(menuBarHeight),
                                         210.0f,
-                                        250.0f
+                                        195.0f
                                     };
                                 }
 
@@ -303,55 +304,113 @@ public:
                             else if (insideSubMenu) {
                                     if (mouseY >= (static_cast<float>(menuBarHeight) + 10.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 39.0f)){
                                         optionSelectedSubMenu = 1;
+                                        switch (optionSelectedMenu) {
+                                            case 1: // Arquivo
+                                                // Carregar arquivo
+                                                
+                                            break;
+
+                                            case 2: // Emulação
+                                                // Pausar/Retomar
+
+                                            break;
+                                        }
                                     }
 
                                     else if (mouseY >= (static_cast<float>(menuBarHeight) + 40.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 79.0f)){
                                         optionSelectedSubMenu = 2;
+                                        switch (optionSelectedMenu) {
+                                            case 1: // Arquivo
+                                                // Fechar arquivo
+
+                                            break;
+
+                                            case 2: // Emulação
+                                                // Reiniciar
+
+                                            break;
+                                        }
                                     }
                                     
                                     else if (mouseY >= (static_cast<float>(menuBarHeight) + 70.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 99.0f)){
                                         optionSelectedSubMenu = 3;
+                                        switch (optionSelectedMenu) {
+                                            case 1: // Arquivo
+                                                // Tela Cheia
+                                                SDL_SetWindowFullscreen(window, !isFullscreen());
+                                            break;
+
+                                            case 2: // Emulação
+                                                // Alterar Velocidade
+
+                                            break;
+                                        }
                                     }
 
                                     else if (mouseY >= (static_cast<float>(menuBarHeight) + 100.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 129.0f)){
                                         optionSelectedSubMenu = 4;
+                                        switch (optionSelectedMenu) {
+                                            case 1: // Arquivo
+                                                // Jogos Recentes
+
+                                            break;
+
+                                            case 2: // Emulação
+                                                // Salvar Estado
+
+                                            break;
+                                        }
                                     }
 
                                     else if (mouseY >= (static_cast<float>(menuBarHeight) + 130.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 159.0f)){
                                         optionSelectedSubMenu = 5;
-                                    }
-                                    
-                                    else if (mouseY >= (static_cast<float>(menuBarHeight) + 160.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 189.0f)){
-                                        optionSelectedSubMenu = 6;
-                                    }
-                                    
-                                    else {
-                                        optionSelectedSubMenu = 0;
-                                    }
+                                        switch (optionSelectedMenu) {
+                                            case 1: // Arquivo
+                                                // Sair
+                                                return true;
+                                            break;
 
-                                    // Executa a opção selecionada
-                                    if (optionSelectedSubMenu > 0) {
-                                        rectSubSelected = SDL_FRect{
-                                            rectSubMenu.x,
-                                            rectSubMenu.y + 10.0f + (optionSelectedSubMenu - 1) * 30.0f,
-                                            rectSubMenu.w,
-                                            30.0f
-                                        };
+                                            case 2: // Emulação
+                                                // Carregar Estado
+                                                
+                                            break;
+                                        }
                                     }
+                                    
+                                else if (mouseY >= (static_cast<float>(menuBarHeight) + 160.0f ) && mouseY < (static_cast<float>(menuBarHeight) + 189.0f)){
+                                    optionSelectedSubMenu = 6;
+                                    if (optionSelectedMenu == 2) {
+                                        // Apagar Estado
+                                    }
+                                }
+                                    
+                                else {
+                                    optionSelectedSubMenu = 0;
+                                }
+
+                                // Desenha a seleção do submenu
+                                if (optionSelectedSubMenu > 0) {
+                                    rectSubSelected = SDL_FRect{
+                                        rectSubMenu.x,
+                                        rectSubMenu.y + 10.0f + (optionSelectedSubMenu - 1) * 30.0f,
+                                        rectSubMenu.w,
+                                        30.0f
+                                    };
+                                }
                             }
 
                             else if (!insideSubMenu) { // se o clique não for no Menu nem no Submenu, limpa as seleções
-                                    rectSelected = SDL_FRect{};
-                                    rectSubSelected = SDL_FRect{};
-                                    rectSubMenu = SDL_FRect{};
-                                    optionSelectedSubMenu = 0;
-                                    cleanTexts();
+                                rectSelected = SDL_FRect{};
+                                rectSubSelected = SDL_FRect{};
+                                rectSubMenu = SDL_FRect{};
+                                optionSelectedSubMenu = 0;
+                                cleanTexts();
                             }
                         }
                     }
                 }
             }
-            return quit;
+            return false;
         }
 
 private:

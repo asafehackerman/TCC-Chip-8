@@ -39,8 +39,7 @@ int main(int argc, char** argv)
 	auto lastCycleTime = std::chrono::high_resolution_clock::now();
 	bool quit = false;
 
-	while (!quit)
-	{
+	while (!quit) {
 		// Processa eventos de teclado e verifica se deve sair
 		quit = platform.ProcessInput(chip8.keypad);
 

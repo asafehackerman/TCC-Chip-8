@@ -39,3 +39,9 @@ A 0 B F       Z X C V
 Este projeto implementa um emulador da máquina virtual CHIP-8, criada em 1977 para facilitar o desenvolvimento de jogos em diferentes computadores da época.
 
 O emulador é capaz de carregar ROMs CHIP-8, interpretar seus opcodes e reproduzir o comportamento da plataforma original, incluindo vídeo, teclado, memória, registradores e execução de instruções.
+
+## Auxiliar para compilar o código
+
+```
+g++ src/*.cpp -IC:/SDL3/SDL3-devel-3.4.16-mingw/x86_64-w64-mingw32/include -LC:/SDL3/SDL3-devel-3.4.16-mingw/x86_64-w64-mingw32/lib -lSDL3_ttf -lSDL3 -o bin/chip8.exe
+```
