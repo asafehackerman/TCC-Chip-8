@@ -1,6 +1,7 @@
 #include "Chip8.h"
 #include <fstream>
 #include <cstring>
+#include <vector>
 
 // Endereço inicial do programa na memória
 const unsigned int START_ADDRESS = 0x200;
@@ -33,9 +34,7 @@ uint8_t fontset[FONTSET_SIZE] = {
 // ============================================================
 // CONSTRUTOR
 // ============================================================
-Chip8::Chip8()
-	: randGen(std::chrono::system_clock::now().time_since_epoch().count())
-{
+Chip8::Chip8():randGen(std::chrono::system_clock::now().time_since_epoch().count()) {
 	// O programa começa no endereço 0x200
 	pc = START_ADDRESS;
 
@@ -109,29 +108,51 @@ Chip8::Chip8()
 	tableF[0x65] = &Chip8::OP_Fx65;
 }
 
+// Reinicia recursos
+void Chip8::Reset() {
+    // Reinicia registradores
+    for (int i = 0; i < 16; i++) {
+        registers[i] = 0;
+        stack[i] = 0;
+        keypad[i] = 0;
+    }
+
+    // Reinicia estado do processador
+    index = 0;
+    pc = START_ADDRESS;
+    sp = 0;
+    delayTimer = 0;
+    soundTimer = 0;
+    opcode = 0;
+
+    // Limpa memória da ROM
+    for (int i = START_ADDRESS; i < 4096; i++) {
+        memory[i] = 0;
+    }
+
+    // Limpa vídeo
+    for (int i = 0; i < VIDEO_WIDTH * VIDEO_HEIGHT; i++) {
+        video[i] = 0;
+    }
+}
+
 // ============================================================
 // CARREGA ROM NA MEMÓRIA A PARTIR DE 0x200
 // ============================================================
-void Chip8::LoadROM(char const* filename)
-{
-	std::ifstream file(filename, std::ios::binary | std::ios::ate);
+bool Chip8::LoadROM(const std::vector<uint8_t>& data) {
+    // Verifica se a ROM está vazia ou ultrapassa a memória disponível
+    if (data.empty() || data.size() > sizeof(memory) - START_ADDRESS) {
+        return false;
+    }
 
-	if (file.is_open())
-	{
-		std::streampos size = file.tellg();
-		char* buffer = new char[size];
+	Reset();
 
-		file.seekg(0, std::ios::beg);
-		file.read(buffer, size);
-		file.close();
+    // Copia a ROM para a memória do Chip-8
+    for (size_t i = 0; i < data.size(); ++i) {
+        memory[START_ADDRESS + i] = data[i];
+    }
 
-		for (long i = 0; i < size; ++i)
-		{
-			memory[START_ADDRESS + i] = buffer[i];
-		}
-
-		delete[] buffer;
-	}
+    return true;
 }
 
 // ============================================================

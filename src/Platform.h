@@ -1,14 +1,18 @@
 #pragma once
 
 #include <iostream>
-#include <SDL3/SDL.h>
-#include <SDL3_ttf/SDL_ttf.h>
+#include <fstream>
 #include <cstdint>
 #include <string>
+#include <vector>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_dialog.h>
+#include <SDL3_ttf/SDL_ttf.h>
 
 class Platform {
 
 public:
+        bool closeROM = false;
         // Construtor
         Platform(char const* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
 
@@ -307,7 +311,7 @@ public:
                                         switch (optionSelectedMenu) {
                                             case 1: // Arquivo
                                                 // Carregar arquivo
-                                                
+                                                openFileDialog();
                                             break;
 
                                             case 2: // Emulação
@@ -322,7 +326,7 @@ public:
                                         switch (optionSelectedMenu) {
                                             case 1: // Arquivo
                                                 // Fechar arquivo
-
+                                                closeROM = true;
                                             break;
 
                                             case 2: // Emulação
@@ -413,6 +417,12 @@ public:
             return false;
         }
 
+        std::vector<uint8_t> GetROM() {
+            std::vector<uint8_t> data = loadedROM;
+            loadedROM.clear();
+            return data;
+        }
+
 private:
         SDL_Window* window{};
         SDL_Renderer* renderer{};
@@ -459,7 +469,55 @@ private:
         std::string texto6;
         std::string texto7;
         std::string texto8;
+        std::vector<uint8_t> loadedROM;
 
+        bool loadFile(const std::string& path, std::vector<uint8_t>& data) { // recebe o caminho do arquivo e os binários pra poder ler
+            if (path.size() < 4 || path.substr(path.size() - 4) != ".ch8") { // verifica se o arquivo é válido pro chip8
+                return false;
+            }
+            
+            std::ifstream file(path, std::ios::binary);
+            char byte;
+            data.clear();
+
+            if (!file.is_open()) { 
+                return false;
+            }
+
+            while (file.get(byte)) { // pega cada byte do arquivo
+                data.push_back(static_cast<uint8_t>(byte)); // manda os bytes pro vetor de dados
+            }
+
+            if (data.empty()) {
+                return false;
+            }
+
+            file.close();
+            return true;
+        }
+
+        void openFileDialog() { // auxiliar do callback
+            const SDL_DialogFileFilter filters[] = {{ "Arquivos CHIP-8", "ch8" }};
+
+            SDL_ShowOpenFileDialog(
+                callback,
+                this,
+                window,
+                filters,
+                1,
+                nullptr,
+                false
+            );
+        }
+
+        static void SDLCALL callback(void* userdata, const char* const* filelist, int filter) {
+            if (filelist && filelist[0]) {
+                Platform* platform = static_cast<Platform*>(userdata);
+
+                platform->loadFile(filelist[0], platform->loadedROM);
+            }
+        }
+        
         // Verifica se tá em tela cheia
         bool isFullscreen() {
             return (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN) != 0;

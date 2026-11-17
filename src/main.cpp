@@ -3,58 +3,69 @@
 #include <chrono>
 #include <iostream>
 
-int main(int argc, char** argv)
-{
-	// Uso: chip8 <escala> <delay_ms> <arquivo.ch8>
-	// Exemplo: chip8 10 1 test_opcode.ch8
-	if (argc != 4)
-	{
-		std::cerr << "Uso: " << argv[0] << " <escala> <delay_ms> <ROM>\n";
-		std::cerr << "escala: fator de escala da janela (ex: 10 para 640x320)\n";
-		std::cerr << "delay_ms: tempo em ms entre ciclos (ex: 1 para rapido, 3 para jogos)\n";
-		std::cerr << "ROM: caminho para o arquivo .ch8\n";
-		std::exit(EXIT_FAILURE);
-	}
-
-	int videoScale = std::stoi(argv[1]);
-	int cycleDelay = std::stoi(argv[2]);
-	char const* romFilename = argv[3];
+int main(int argc, char** argv) {
+	
+	constexpr int VIDEO_SCALE = 20;
+	constexpr int CYCLE_DELAY = 4;
 
 	// Cria a janela SDL2 (64*escala x 32*escala pixels)
 	Platform platform(
 		"Emulador Chip-8",
-		VIDEO_WIDTH  * videoScale,
-		VIDEO_HEIGHT * videoScale,
+		VIDEO_WIDTH  * VIDEO_SCALE,
+		VIDEO_HEIGHT * VIDEO_SCALE,
 		VIDEO_WIDTH,
 		VIDEO_HEIGHT
 	);
 
 	// Inicializa o emulador e carrega a ROM
 	Chip8 chip8;
-	chip8.LoadROM(romFilename);
 
 	// pitch = largura em bytes de uma linha do buffer de vídeo
 	int videoPitch = sizeof(chip8.video[0]) * VIDEO_WIDTH;
 
 	auto lastCycleTime = std::chrono::high_resolution_clock::now();
 	bool quit = false;
+	bool romLoaded = false;
 
 	while (!quit) {
 		// Processa eventos de teclado e verifica se deve sair
 		quit = platform.ProcessInput(chip8.keypad);
+		platform.Update(chip8.video, videoPitch);
 
-		auto  currentTime = std::chrono::high_resolution_clock::now();
-		float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
+		std::vector<uint8_t> data = platform.GetROM();
 
-		// Executa um ciclo apenas quando o delay passou
-		if (dt > cycleDelay)
-		{
-			lastCycleTime = currentTime;
+		if (!data.empty()) { // vê se ele não pegou nenhum dado
+			std::cout << "Bytes recebidos: " << data.size() << '\n';
 
-			chip8.Cycle();
+			if (chip8.LoadROM(data)) {
+				std::cout << "ROM carregada!\n";
+				romLoaded = true;
+			}
+			else {
+				std::cout << "Erro ao carregar ROM!\n";
+			}
+		}
 
-			// Atualiza a tela
-			platform.Update(chip8.video, videoPitch);
+		if (romLoaded) {
+			auto  currentTime = std::chrono::high_resolution_clock::now();
+			float dt = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
+
+			// Executa um ciclo apenas quando o delay passou
+			if (dt > CYCLE_DELAY)
+			{
+				lastCycleTime = currentTime;
+
+				chip8.Cycle();
+
+				// Atualiza a tela
+				platform.Update(chip8.video, videoPitch);
+
+				if (platform.closeROM) {
+					chip8.Reset();
+					romLoaded = false;
+					platform.closeROM = false;
+				}
+			}
 		}
 	}
 

@@ -1,25 +1,11 @@
 # Emulador CHIP-8
 
-## Como executar (comandos do bash)
+## Como executar (bash)
 
 O emulador já está compilado e pronto para uso. Para executá-lo, basta utilizar um dos comandos abaixo para rodar os jogos disponíveis no projeto, este emulador implementa o CHIP-8 original e não possui suporte a extensões como Super-CHIP.
 
-### Executar Pong
-
 ```
-./bin/chip8.exe 10 5 ./games/Pong.ch8
-```
-
-### Executar Tetris
-
-```
-./bin/chip8.exe 10 5 ./games/Tetris.ch8
-```
-
-### Executar teste de opcodes
-
-```
-./bin/chip8.exe 10 5 ./games/test_opcode.ch8
+./bin/chip8.exe
 ```
 
 ## Controles
