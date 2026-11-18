@@ -211,7 +211,9 @@ public:
                                 if (mouseX >= 12 && mouseX < 90) { // Seleciona arquivo
                                     optionSelectedMenu = 1;
                                     optionSelectedSubMenu = 0;
+
                                     cleanTexts();
+                                    
                                     texto1 = "Carregar Arquivo";
                                     texto2 = "Fechar Arquivo";
                                     texto3 = "Tela cheia";
@@ -220,13 +222,13 @@ public:
 
                                     updateTexts();
                                     
-                                    rectSelected = SDL_FRect{
+                                    rectSelected = SDL_FRect {
                                         10.0f,
                                         45.0f,
                                         90.0f,
                                         5.0f
                                     };
-                                    rectSubMenu = SDL_FRect{                                
+                                    rectSubMenu = SDL_FRect {                                
                                         0.0f,
                                         static_cast<float>(menuBarHeight),
                                         210.0f,
@@ -241,6 +243,7 @@ public:
                                     optionSelectedSubMenu = 0;
 
                                     cleanTexts();
+
                                     texto1 = "Pausar/Retomar";
                                     texto2 = "Reiniciar";
                                     texto3 = "Alterar Velocidade";
@@ -250,13 +253,13 @@ public:
 
                                     updateTexts();
 
-                                    rectSelected = SDL_FRect{
+                                    rectSelected = SDL_FRect {
                                         108.0f,
                                         45.0f,
                                         110.0f,
                                         5.0f
                                     };
-                                    rectSubMenu = SDL_FRect{                                
+                                    rectSubMenu = SDL_FRect {                                
                                         108.0f,
                                         static_cast<float>(menuBarHeight),
                                         210.0f,
@@ -269,18 +272,27 @@ public:
                                     optionSelectedSubMenu = 0;
 
                                     cleanTexts();
+
+                                    texto1 = "F11 - Tela cheia";
+                                    texto2 = "ESC - Sair do emulador";
+                                    texto3 = "CHIP-8       Teclado";
+                                    texto4 = "1 2 3 C       1  2  3  4";
+                                    texto5 = "4 5 6 D       Q W E R";
+                                    texto6 = "7 8 9 E       A  S  D F";
+
+                                    updateTexts();
                                     
-                                    rectSelected = SDL_FRect{
+                                    rectSelected = SDL_FRect {
                                         228.0f,
                                         45.0f,
                                         110.0f,
                                         5.0f
                                     };
-                                    rectSubMenu = SDL_FRect{                                
+                                    rectSubMenu = SDL_FRect {
                                         228.0f,
                                         static_cast<float>(menuBarHeight),
-                                        250.0f,
-                                        250.0f
+                                        275.0f,
+                                        210.0f
                                     };
                                 }
 
@@ -290,17 +302,23 @@ public:
                                     
                                     cleanTexts();
 
-                                    rectSelected = SDL_FRect{
+                                    texto1 = "Este projeto implementa um emulador da maquina virtual CHIP-8";
+                                    texto2 = "criada em 1977 para facilitar o desenvolvimento de jogos.";
+                                    texto4 = "Made by Asafe Elias and Daniel Garbeto";
+
+                                    updateTexts();
+
+                                    rectSelected = SDL_FRect {
                                         348.0f,
                                         45.0f,
                                         45.0f,
                                         5.0f
                                     };
-                                    rectSubMenu = SDL_FRect{                                
+                                    rectSubMenu = SDL_FRect {
                                         348.0f,
                                         static_cast<float>(menuBarHeight),
-                                        250.0f,
-                                        200.0f
+                                        710.0f,
+                                        135.0f
                                     };
                                 }
                             }
@@ -591,11 +609,19 @@ private:
                     break;
 
                     case 3: // Controles
-
+                        TTF_DrawRendererText(text1, 240.0f, 60.0f);
+                        TTF_DrawRendererText(text2, 240.0f, 90.0f);
+                        TTF_DrawRendererText(text3, 240.0f, 130.0f);
+                        TTF_DrawRendererText(text4, 240.0f, 160.0f);
+                        TTF_DrawRendererText(text5, 240.0f, 190.0f);
+                        TTF_DrawRendererText(text6, 240.0f, 220.0f);
                     break;
 
                     case 4: // Info
-
+                        TTF_DrawRendererText(text1, 360.0f, 60.0f);
+                        TTF_DrawRendererText(text2, 360.0f, 90.0f);
+                        TTF_DrawRendererText(text3, 360.0f, 120.0f);
+                        TTF_DrawRendererText(text4, 360.0f, 150.0f);
                     break;
                 }
 
