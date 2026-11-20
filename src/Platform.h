@@ -34,7 +34,7 @@ public:
             
             renderer = SDL_CreateRenderer(window, nullptr);
             textEngine = TTF_CreateRendererTextEngine(renderer);
-            font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 24);
+            font = TTF_OpenFont("assets/fonts/LiberationSans-Regular.ttf", 24);
             
             // Cria os textos do menu
             textArquivo = TTF_CreateText(textEngine, font, "Arquivo", 0);
